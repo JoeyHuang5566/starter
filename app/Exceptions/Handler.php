@@ -2,17 +2,21 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use App\Exceptions\MyException;
+use App\Traits\JsonRender;
 
 class Handler extends ExceptionHandler
 {
+    use JsonRender;
     /**
      * A list of the exception types that are not reported.
      *
      * @var array
      */
     protected $dontReport = [
-        //
+        MyException::class
     ];
 
     /**
@@ -32,6 +36,12 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        //
+        $this->renderable(function (MyException $e, $request) {
+            return $this->jsonRenderResultWithError(
+                $e->getMessage(),
+                $e->getStatusCode(),
+                $e->getOption()
+            );
+        });
     }
 }
