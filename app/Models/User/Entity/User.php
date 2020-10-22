@@ -2,6 +2,7 @@
 
 namespace App\Models\User\Entity;
 
+use App\Models\User\Entity\UserToken;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -40,4 +41,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function tokens()
+    {
+        return $this->hasMany(UserToken::class, 'user_id', 'id');
+    }
+
+    public function getLatestTokenValue()
+    {
+        return $this->tokens()->latest()->first()->value;
+    }
 }

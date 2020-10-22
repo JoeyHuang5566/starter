@@ -4,8 +4,11 @@ namespace App\Http\Controllers\API;
 
 use App\Exceptions\MyException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\SignInRequest;
 use App\Http\Requests\SignUpRequest;
 use App\Models\User\Entity\User;
+use App\Models\User\Entity\UserToken;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Database\DatabaseManager as DB;
 
@@ -30,9 +33,9 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created user in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\SignUpRequest $request
      * @return \Illuminate\Http\Response
      */
     public function signup(SignUpRequest $request)
@@ -57,6 +60,33 @@ class UserController extends Controller
         }
 
     	return $this->jsonRenderResultWithSuccess();
+    }
+
+    /**
+     * Log in the user in the system.
+     *
+     * @param  App\Http\Requests\SignInRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function signin(SignInRequest $request)
+    {
+        $validated = $request->validated();
+
+        $user = User::where('email', $validated['email'])->first();
+
+        if( !password_verify($validated['password'], $user->password) )
+        {
+            throw new MyException('input_data_error');
+        }
+
+        do {
+            $tokenValue = Str::random(64);
+            $result = UserToken::where('value', $tokenValue)->first();
+        } while( !is_null($result) );
+
+        $token = $user->tokens()->create(['value' => $tokenValue]);
+
+    	return $this->jsonRenderResultWithSuccess(['api_token' => $token->value]);
     }
 
     /**
