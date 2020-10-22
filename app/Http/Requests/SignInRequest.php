@@ -7,7 +7,7 @@ use App\Rules\UserDuplicate;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SignUpRequest extends FormRequest
+class SignInRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,11 @@ class SignUpRequest extends FormRequest
      *
      * @return array
      */
-    public function rules(UserDuplicate $userDuplicate)
+    public function rules()
     {
-        return  [
-            'name'     => 'required',
-            'password' => 'required',
-            'email'    => ['required', 'email', $userDuplicate]
+        return [
+            'email'    => 'required|email',
+            'password' => 'required'
         ];
     }
 
@@ -55,4 +54,5 @@ class SignUpRequest extends FormRequest
     {
         throw new MyException('illegal_form_input', 403, ['validation' => $validator->errors()]);
     }
+
 }
