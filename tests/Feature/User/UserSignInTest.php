@@ -17,17 +17,11 @@ class UserSignInTest extends TestCase
     public function user_sign_in_successfully()
     {
 
-        $password = "88888888";
-        $taylor = User::create([
-            'name'     => 'Taylor',
-            'password' => password_hash($password, PASSWORD_BCRYPT),
-            'email'    => 'example@example.com',
-        ]);
+        $someone = User::factory()->make();
+        $userData = $someone->toArray();
 
-        $userData = [
-                'email'    => $taylor->email,
-                'password' => $password
-            ];
+        $someone->password = password_hash($someone->password, PASSWORD_BCRYPT);
+        $someone->save();
 
         $response = $this->postJson(
             $this->url, 
@@ -37,7 +31,7 @@ class UserSignInTest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJson([
-                'api_token' => $taylor->getLatestTokenValue()
+                'api_token' => $someone->getLatestTokenValue()
             ]);;
     }
 
@@ -47,17 +41,12 @@ class UserSignInTest extends TestCase
     public function password_is_not_correct()
     {
 
-        $password = "88888888";
-        $taylor = User::create([
-            'name'     => 'Taylor',
-            'password' => password_hash($password, PASSWORD_BCRYPT),
-            'email'    => 'example@example.com',
-        ]);
+        $registeredMember = User::factory()->make();
+        $userData = $registeredMember->toArray();
+        $userData['password'] = 'wrong_password';
 
-        $userData = [
-                'email'    => $taylor->email,
-                'password' => '12345678'
-            ];
+        $registeredMember->password = password_hash($registeredMember->password, PASSWORD_BCRYPT);
+        $registeredMember->save();
 
         $response = $this->postJson(
             $this->url, 
