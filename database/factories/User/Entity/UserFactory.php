@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\User\Entity;
 
 use App\Models\User\Entity\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -25,9 +25,21 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
-            'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-            'remember_token' => Str::random(10),
+            'password' => $this->faker->password
         ];
+    }
+
+    /**
+     * Indicate that the users password is hashed.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function alreadyHashed()
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'password' => password_hash($attributes['password'], PASSWORD_BCRYPT),
+            ];
+        });
     }
 }

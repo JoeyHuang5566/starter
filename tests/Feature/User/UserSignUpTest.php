@@ -16,21 +16,16 @@ class UserSignUpTest extends TestCase
      */
     public function user_sign_up_successfully()
     {
-
-        $userData = [
-                'name'     => 'Sally',
-                'password' => '12345678',
-                'email'    => 'example@example.com'
-            ];
+        $someone = User::factory()->make();
 
         $response = $this->postJson(
             $this->url, 
-            $userData
+            $someone->toArray()
         );
 
         $response
             ->assertStatus(200)
-            ->assertJson([]);;
+            ->assertJson([]);
     }
 
     /**
@@ -39,22 +34,14 @@ class UserSignUpTest extends TestCase
     public function email_is_duplicate()
     {
 
-        $taylor = User::create([
-            'name'     => 'Taylor',
-            'password' => '88888888',
-            'email'    => 'example@example.com',
-        ]);
-        $taylor->save();
+        $registeredMember = User::factory()->create();
+        $someone = User::factory()->make();
 
-        $userData = [
-                'name'     => 'Sally',
-                'password' => '12345678',
-                'email'    => $taylor->email
-            ];
+        $someone->email = $registeredMember->email;
 
         $response = $this->postJson(
             $this->url, 
-            $userData
+            $someone->toArray()
         );
 
         $response
