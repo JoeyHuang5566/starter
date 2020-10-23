@@ -10,6 +10,7 @@ use App\Models\User\Entity\User;
 use App\Models\User\Entity\UserToken;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\DatabaseManager as DB;
 
 class UserController extends Controller
@@ -87,6 +88,23 @@ class UserController extends Controller
         $token = $user->tokens()->create(['value' => $tokenValue]);
 
     	return $this->jsonRenderResultWithSuccess(['api_token' => $token->value]);
+    }
+
+    /**
+     * Get the user self profile
+     *
+     * @param  App\Http\Requests\SignInRequest $request
+     * @return \Illuminate\Http\Response
+     */
+    public function profile(Request $request)
+    {
+        $user = Auth::user();
+
+        return $this->jsonRenderResultWithSuccess([
+            'id'    => $user->id,
+            'name'  => $user->name,
+            'email' => $user->email
+        ]);
     }
 
     /**

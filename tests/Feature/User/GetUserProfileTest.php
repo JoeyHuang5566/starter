@@ -31,9 +31,39 @@ class GetUserProfileTest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJson([
-                'id'    => $someone->id,
-                'name'  => $someone->name,
-                'email' => $someone->email
-            ]);;
+                'id'    => $registeredMember->id,
+                'name'  => $registeredMember->name,
+                'email' => $registeredMember->email
+            ]);
+    }
+
+    /**
+     * @test
+     */
+    public function fail_api_token_is_not_correct()
+    {
+
+        $response = $this->postJson(
+            $this->url, 
+            [
+                'api_token' => '12345678'
+            ]
+        );
+
+        $response->assertStatus(401);
+    }
+
+    /**
+     * @test
+     */
+    public function fail_api_token_is_null()
+    {
+
+        $response = $this->postJson(
+            $this->url, 
+            []
+        );
+
+        $response->assertStatus(401);
     }
 }

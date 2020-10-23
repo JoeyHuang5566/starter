@@ -42,7 +42,9 @@ return [
         ],
 
         'api' => [
-            'driver' => 'token',
+            'driver' => 'api-token',
+            'input_key' => 'api_token',
+            'storage_key' => 'value',
             'provider' => 'users',
             'hash' => false,
         ],
@@ -68,7 +70,11 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User\Entity::class,
+            'model' => App\Models\User\Entity\User::class,
+        ],
+        'userToken' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User\Entity\UserToken::class,
         ],
 
         // 'users' => [
