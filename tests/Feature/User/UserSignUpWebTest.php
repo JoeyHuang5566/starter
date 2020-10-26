@@ -19,7 +19,7 @@ class UserSignUpWebTest extends TestCase
 
         $response
             ->assertStatus(200)
-            ->assertViewIs('signup')
+            ->assertViewIs('users.signup')
             ->assertSee('Name')
             ->assertSee('Email')
             ->assertSee('Password');
