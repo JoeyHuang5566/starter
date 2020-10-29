@@ -93,7 +93,7 @@ class UserController extends Controller
     /**
      * Get the user self profile
      *
-     * @param  App\Http\Requests\SignInRequest $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function profile(Request $request)

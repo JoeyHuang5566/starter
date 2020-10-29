@@ -6,54 +6,58 @@ use App\Models\User\Entity\User;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class UserSignUpTest extends TestCase
+class UserSignInAPITest extends TestCase
 {
 
-    protected $url = '/api/users/signup';
+    protected $url = '/api/users/signin';
 
     /**
      * @test
      */
-    public function user_sign_up_successfully()
+    public function user_sign_in_successfully()
     {
+
         $someone = User::factory()->make();
+        $userData = $someone->toArray();
+
+        $someone->password = password_hash($someone->password, PASSWORD_BCRYPT);
+        $someone->save();
 
         $response = $this->postJson(
             $this->url, 
-            $someone->toArray()
+            $userData
         );
 
         $response
             ->assertStatus(200)
-            ->assertJson([]);
+            ->assertJson([
+                'api_token' => $someone->getLatestTokenValue()
+            ]);;
     }
 
     /**
      * @test
      */
-    public function email_is_duplicate()
+    public function password_is_not_correct()
     {
 
-        $registeredMember = User::factory()->create();
-        $someone = User::factory()->make();
+        $registeredMember = User::factory()->make();
+        $userData = $registeredMember->toArray();
+        $userData['password'] = 'wrong_password';
 
-        $someone->email = $registeredMember->email;
+        $registeredMember->password = password_hash($registeredMember->password, PASSWORD_BCRYPT);
+        $registeredMember->save();
 
         $response = $this->postJson(
             $this->url, 
-            $someone->toArray()
+            $userData
         );
 
         $response
             ->assertStatus(403)
             ->assertJson([
-             "error_name" => "illegal_form_input",
-             "validation" => [
-                     "email" => [
-                         "The email is registered."
-                     ]
-                 ]
-             ]);
+                "error_name" => "input_data_error"
+            ]);
     }
 
     /**
@@ -76,24 +80,9 @@ class UserSignUpTest extends TestCase
     public function lackInputingData()
     {
         return [
-            'no_name_data'    => [
-                [
-                    'password' => '12345678',
-                    'email'    => 'example@example.com'
-                ],
-                [
-                    "error_name" => "illegal_form_input",
-                    "validation" => [
-                            "name" => [
-                                "required"
-                            ]
-                    ]
-                ]
-            ],
             'no_password_data' => [
                 [
-                    'name'  => 'John Doe',
-                    'email' => 'example@example.com'
+                    'name'  => 'John Doe'
                 ],
                 [
                     "error_name" => "illegal_form_input",
@@ -106,7 +95,6 @@ class UserSignUpTest extends TestCase
             ],
             'no_email_data' => [
                 [
-                    'name'     =>'John Doe',
                     'password' => '12345678'
                 ],
                 [

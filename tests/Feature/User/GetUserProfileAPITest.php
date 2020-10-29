@@ -7,7 +7,7 @@ use App\Models\User\Entity\UserToken;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class GetUserProfileTest extends TestCase
+class GetUserProfileAPITest extends TestCase
 {
 
     protected $url = '/api/users/profile';

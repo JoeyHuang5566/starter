@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +16,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::group(['prefix' => 'users'], function () {
+    Route::get('signup', [UserController::class, 'signup'])->name('getSignUp');
+    Route::post('signup', [UserController::class, 'store'])->name('postSignUp');
 });
