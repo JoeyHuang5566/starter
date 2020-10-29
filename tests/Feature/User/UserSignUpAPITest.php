@@ -26,6 +26,14 @@ class UserSignUpAPITest extends TestCase
         $response
             ->assertStatus(200)
             ->assertJson([]);
+
+        $this->assertDatabaseHas(
+            'users',
+            [
+                'name'  => $someone->name,
+                'email' => $someone->email
+            ]
+        );
     }
 
     /**

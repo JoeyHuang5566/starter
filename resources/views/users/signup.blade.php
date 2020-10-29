@@ -13,7 +13,7 @@
     <body>
 
     <h2>Register</h2>
-        <form method="POST" action="/">
+        <form method="POST" action="/users/signup">
             {{ csrf_field() }}
             <div class="form-group">
                 <label for="name">Name:</label>

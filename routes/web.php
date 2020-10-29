@@ -19,5 +19,6 @@ Route::get('/', function () {
 });
 
 Route::group(['prefix' => 'users'], function () {
-    Route::get('signup', [UserController::class, 'signup']);
+    Route::get('signup', [UserController::class, 'signup'])->name('getSignUp');
+    Route::post('signup', [UserController::class, 'store'])->name('postSignUp');
 });
